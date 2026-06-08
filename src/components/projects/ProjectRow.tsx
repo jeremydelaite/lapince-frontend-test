@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { ParticipantStack } from "@/components/common/ParticipantStack";
 import { BudgetProgress } from "@/components/projects/BudgetProgress";
 import { ProjectDetails } from "@/components/projects/ProjectDetails";
-import type { IDashboardProject, IParticipant, IAppUser } from "@/types/project";
+import type { IDashboardProject, IProjectParticipants } from "@/types/project";
 
 const typeToIcon = {
 	Voyage: "plane",
@@ -54,13 +54,11 @@ export function ProjectRow({ project }: ProjectRowProps) {
 
 			<td className="hidden px-6 py-4 md:table-cell">
 				<ParticipantStack
-					participants={project.participants.map((p) => ({
-						participant: {
-							id: p.id,
-							name: p.name,
-							appUser: null as IAppUser | null
-						},
-					}))}
+					participants={
+						project.participants.map((p) => ({
+							participant: { id: p.id, name: p.name, appUser: null as null },
+						})) as IProjectParticipants[]
+					}
 				/>
 			</td>
 

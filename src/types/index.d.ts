@@ -17,3 +17,13 @@ export type LoginResponse = {
 export type UserResponse = {
 	user: User;
 };
+
+export type CategoriesResponse = {
+	categories: ICategories[];
+};
+
+export type ICategories = {
+	id: number;
+	name: string;
+	color: string;
+};

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConnectedHeader } from "@/components/common/ConnectedHeader";
 import { ProjectDialog } from "@/components/common/ProjectDialog";
 import { ProjectsHeading } from "@/components/projects/ProjectsHeading";
@@ -7,6 +7,9 @@ import { UserStats } from "@/components/projects/UserStats";
 
 export function ProjectsPage() {
 	const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+	useEffect(() => {
+		document.title = "La Pince – Mes projets";
+	}, []);
 	return (
 		<>
 			<ConnectedHeader />

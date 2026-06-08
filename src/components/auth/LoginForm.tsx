@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,10 +23,14 @@ export function LoginForm({ onRegisterClick }: LoginFormProps) {
 
 		try {
 			await login({ email, password });
+			toast.success("Connexion réussie");
 			// Login successful → redirect to projects page
 			navigate("/projects");
 		} catch {
 			setErrorMessage("Email ou mot de passe incorrect");
+			toast.error("Connexion échouée", {
+				description: "Email ou mot de passe incorrect",
+			});
 		}
 	}
 

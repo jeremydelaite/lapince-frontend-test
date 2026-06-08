@@ -7,66 +7,95 @@ import {
 } from "lucide-react";
 import { ParticipantStack } from "@/components/common/ParticipantStack";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { useCategories } from "@/context/CategoriesContext";
+import { useProject } from "@/context/ProjectContext";
+import type { IOperation } from "@/types/operations";
+import { getAvatarColor } from "@/utils/avatarColors";
 
-type ExpenseCategory =
-	| "hebergement"
-	| "transport"
-	| "restauration"
-	| "activites"
-	| "courses";
-
-export type Expense = {
-	id: string;
-	description: string;
-	date: string;
-	paidBy: string;
-	paidByInitials: string;
-	beneficiaries: string[];
-	amount: string;
-	category: ExpenseCategory;
+type OperationsRowProps = {
+	operation: IOperation;
+	setSelectedOperation: (operation: IOperation | null) => void;
+	setIsOperationDialogOpen: (open: boolean) => void;
 };
 
-const categoryIcons = {
-	hebergement: BedDouble,
-	transport: TrainFront,
-	restauration: Utensils,
-	activites: Ticket,
-	courses: ShoppingBasket,
-};
+const icons = [
+	{ name: "Hébergement", icon: BedDouble },
+	{ name: "Loisir", icon: Ticket },
+	{ name: "Courses", icon: ShoppingBasket },
+	{ name: "Divers", icon: Utensils },
+	{ name: "Transport", icon: TrainFront },
+	{ name: "Restauration", icon: Utensils },
+];
 
-export function OperationsRow({ operation }: { operation: Expense }) {
-	const Icon = categoryIcons[operation.category];
+export function OperationsRow({
+	operation,
+	setSelectedOperation,
+	setIsOperationDialogOpen,
+}: OperationsRowProps) {
+	const { categories } = useCategories();
+	const category = categories.find((cat) => cat.id === operation.categoryId);
+	const Icon =
+		icons.find((icon) => icon.name === category?.name)?.icon ?? BedDouble;
+	const amount = Number(operation.amount);
+	const { project } = useProject();
+
+	function getPayerParticipantName() {
+		const payerParticipant = project?.projectParticipants.find(
+			(opParticipant) =>
+				opParticipant.participant.id === operation.payerParticipantId,
+		);
+		return payerParticipant?.participant.name;
+	}
+
+	const payerParticipantName = getPayerParticipantName();
+
+	function openOperationDialog() {
+		setSelectedOperation(operation);
+		setIsOperationDialogOpen(true);
+	}
 
 	return (
-		<TableRow>
+		<TableRow className="hover:bg-muted/50" onClick={openOperationDialog}>
 			<TableCell>
 				<div className="flex items-center gap-3">
-					<span className="inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+					<span
+						style={{ backgroundColor: category?.color ?? "#6b7280" }}
+						className="inline-flex text-white size-8 shrink-0 items-center justify-center rounded-md"
+					>
 						<Icon className="size-4" />
 					</span>
-					<p className="font-medium">{operation.description}</p>
+					<p className="font-medium">{operation.name}</p>
 				</div>
 			</TableCell>
 
 			<TableCell className="hidden text-xs text-muted-foreground sm:table-cell">
-				{operation.date}
-			</TableCell>
-
-			<TableCell className="hidden lg:table-cell">
-				<div className="flex items-center gap-2">
-					<span className="flex size-6 items-center justify-center rounded-full bg-muted text-[10px] font-medium">
-						{operation.paidByInitials}
-					</span>
-					<span className="text-xs">{operation.paidBy}</span>
-				</div>
+				{new Date(operation.date).toLocaleDateString("fr-FR", {
+					day: "2-digit",
+					month: "2-digit",
+					year: "2-digit",
+				})}
 			</TableCell>
 
 			<TableCell className="hidden md:table-cell">
-				<ParticipantStack participants={operation.beneficiaries} />
+				<div className="flex items-center gap-2">
+					<span
+						className={`flex size-6 items-center justify-center rounded-full text-[10px] font-medium text-white ${getAvatarColor(payerParticipantName ?? "")}`}
+					>
+						{payerParticipantName?.slice(0, 2).toUpperCase()}
+					</span>
+					<span className="text-xs">{payerParticipantName}</span>
+				</div>
+			</TableCell>
+
+			<TableCell className="hidden sm:table-cell">
+				<ParticipantStack participants={operation.operationParticipants} />
 			</TableCell>
 
 			<TableCell className="text-right font-medium tabular-nums">
-				{operation.amount}
+				{amount.toLocaleString("fr-FR", {
+					style: "currency",
+					currency: "EUR",
+				})}
 			</TableCell>
 		</TableRow>
 	);

@@ -5,12 +5,12 @@ export function PublicFooter() {
 				<p>© 2026 LaPince</p>
 
 				<nav className="flex items-center gap-6">
-					<a href="/" className="hover:text-foreground">
+					<a href="/privacy-policy" className="hover:text-foreground">
 						Mentions légales
 					</a>
-					<a href="/" className="hover:text-foreground">
+					{/* <a href="/" className="hover:text-foreground">
 						CGU
-					</a>
+					</a> */}
 					<a href="/" className="hover:text-foreground">
 						Contact
 					</a>

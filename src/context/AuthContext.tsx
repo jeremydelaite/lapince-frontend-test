@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import { createContext, useContext, useEffect, useState } from "react";
 import type { LoginPayload, RegisterPayload } from "@/services/api";
 import { apiLogin, apiLogout, apiMe, apiRegister } from "@/services/api";

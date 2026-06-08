@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,13 +19,25 @@ export function RegisterForm({ onLoginClick }: RegisterFormProps) {
 		const name = formData.get("name") as string;
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
+		const confirmPassword = formData.get("confirmPassword") as string;
+
+		if (password !== confirmPassword) {
+			setErrorMessage("Les mots de passe ne sont pas identiques");
+			return;
+		}
 
 		try {
 			await register({ name, email, password });
 			// Registration successful → switch to login form
+			toast.success("Compte créé !", {
+				description: "Bienvenue sur La Pince 🎉",
+			});
 			onLoginClick();
 		} catch {
 			setErrorMessage("Une erreur est survenue, veuillez réessayer");
+			toast.error("Inscription échouée", {
+				description: "Une erreur est survenue, veuillez réessayer",
+			});
 		}
 	}
 
@@ -71,6 +84,20 @@ export function RegisterForm({ onLoginClick }: RegisterFormProps) {
 					required
 				/>
 			</div>
+
+			<div className="space-y-2">
+				<Label htmlFor="register-confirm-password">
+					Confirmer le mot de passe
+				</Label>
+				<Input
+					id="register-confirm-password"
+					name="confirmPassword"
+					type="password"
+					placeholder="••••••••"
+					required
+				/>
+			</div>
+
 			{errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
 
 			<Button type="submit" className="w-full">

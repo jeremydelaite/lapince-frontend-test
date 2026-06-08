@@ -1,4 +1,25 @@
-import type { LoginResponse, UserResponse } from "@/types";
+import type {
+	CategoriesResponse,
+	ICategories,
+	LoginResponse,
+	UserResponse,
+} from "@/types";
+import type { BudgetSummary } from "@/types/budget";
+import type {
+	CreateOperationPayload,
+	IOperation,
+	IOperationsResponse,
+} from "@/types/operations";
+import type {
+	CreateProjectPayload,
+	IDashboardProject,
+	IParticipant,
+	IProjectsDashboardResponse,
+	UpdateProjectParticipantsResponse,
+	UpdateProjectPayload,
+	UpdateProjectResponse,
+} from "@/types/project";
+import type { Reimbursement } from "@/types/reimbursement";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -81,4 +102,150 @@ export async function apiMe(): Promise<UserResponse> {
 		headers: buildHeaders(true),
 	});
 	return handleResponse(res);
+}
+
+// ── Projects endpoints ───────────────────────────────────────────────────────
+
+export async function apiGetProjects(
+	cursor?: number,
+): Promise<IProjectsDashboardResponse> {
+	const url = cursor
+		? `${BASE_URL}/api/projects?cursor=${cursor}`
+		: `${BASE_URL}/api/projects`;
+
+	const res = await fetch(url, {
+		method: "GET",
+		headers: buildHeaders(true),
+	});
+	return handleResponse(res);
+}
+
+export async function apiCreateProject(
+	payload: CreateProjectPayload,
+): Promise<{ project: IDashboardProject }> {
+	const res = await fetch(`${BASE_URL}/api/projects`, {
+		method: "POST",
+		headers: buildHeaders(true),
+		body: JSON.stringify(payload),
+	});
+	return handleResponse(res);
+}
+
+export async function apiUpdateProject(
+	projectId: number,
+	payload: UpdateProjectPayload,
+): Promise<UpdateProjectResponse> {
+	const res = await fetch(`${BASE_URL}/api/projects/${projectId}`, {
+		method: "PATCH",
+		headers: buildHeaders(true),
+		body: JSON.stringify(payload),
+	});
+	return handleResponse<UpdateProjectResponse>(res);
+}
+
+export async function apiUpdateParticipantsProject(
+	projectId: number,
+	payload: IParticipant[],
+): Promise<UpdateProjectParticipantsResponse> {
+	const res = await fetch(
+		`${BASE_URL}/api/projects/${projectId}/participants`,
+		{
+			method: "PATCH",
+			headers: buildHeaders(true),
+			body: JSON.stringify(payload),
+		},
+	);
+	return handleResponse<UpdateProjectParticipantsResponse>(res);
+}
+
+// ── Budget endpoints ─────────────────────────────────────────────────────────
+
+export async function apiGetBudgets(projectId: number): Promise<BudgetSummary> {
+	const res = await fetch(`${BASE_URL}/api/projects/${projectId}/budgets`, {
+		method: "GET",
+		headers: buildHeaders(true),
+	});
+	return handleResponse<BudgetSummary>(res);
+}
+
+// ── Balance endpoints ────────────────────────────────────────────────────────
+
+export async function apiGetBalance(
+	projectId: number,
+): Promise<Reimbursement[]> {
+	const res = await fetch(`${BASE_URL}/api/projects/${projectId}/balance`, {
+		method: "GET",
+		headers: buildHeaders(true),
+	});
+	return handleResponse<Reimbursement[]>(res);
+}
+
+// ── Category endpoints ───────────────────────────────────────────────────────────
+
+export async function apiGetCategories(): Promise<ICategories[]> {
+	const res = await fetch(`${BASE_URL}/api/categories`, {
+		method: "GET",
+		headers: buildHeaders(false),
+	});
+	const data = await handleResponse<CategoriesResponse>(res);
+	return data.categories;
+}
+
+// ── Operation endpoints ───────────────────────────────────────────────────────────
+
+export async function apiGetOperations(
+	projectId: number,
+): Promise<IOperation[]> {
+	const res = await fetch(`${BASE_URL}/api/projects/${projectId}/operations`, {
+		method: "GET",
+		headers: buildHeaders(true),
+	});
+	const data = await handleResponse<IOperationsResponse>(res);
+	return data.operations;
+}
+
+export async function apiCreateOperation(
+	operationPayload: CreateOperationPayload,
+): Promise<IOperation> {
+	const projectId = operationPayload.projectId;
+	const res = await fetch(`${BASE_URL}/api/projects/${projectId}/operations`, {
+		method: "POST",
+		headers: buildHeaders(true),
+		body: JSON.stringify(operationPayload),
+	});
+
+	const data = await handleResponse<{ operation: IOperation }>(res);
+	return data.operation;
+}
+
+export async function apiUpdateOperation(
+	operationId: number,
+	operationPayload: CreateOperationPayload,
+): Promise<IOperation> {
+	const projectId = operationPayload.projectId;
+	const res = await fetch(
+		`${BASE_URL}/api/projects/${projectId}/operations/${operationId}`,
+		{
+			method: "PATCH",
+			headers: buildHeaders(true),
+			body: JSON.stringify(operationPayload),
+		},
+	);
+	const data = await handleResponse<{ operation: IOperation }>(res);
+	return data.operation;
+}
+// ── Global balance endpoint ──────────────────────────────────────────────────
+
+export type GlobalBalance = {
+	toDo: number;
+	toReceive: number;
+	netBalance: number;
+};
+
+export async function apiGetGlobalBalance(): Promise<GlobalBalance> {
+	const res = await fetch(`${BASE_URL}/api/balance`, {
+		method: "GET",
+		headers: buildHeaders(true),
+	});
+	return handleResponse<GlobalBalance>(res);
 }

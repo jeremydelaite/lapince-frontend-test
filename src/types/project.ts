@@ -21,7 +21,7 @@ export interface IParticipant {
 	name: string;
 }
 
-interface IAppUser {
+export interface IAppUser {
 	id: number;
 }
 

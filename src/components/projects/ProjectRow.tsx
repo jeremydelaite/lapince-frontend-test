@@ -5,7 +5,6 @@ import { BudgetProgress } from "@/components/projects/BudgetProgress";
 import { ProjectDetails } from "@/components/projects/ProjectDetails";
 import type { IDashboardProject, IProjectParticipants } from "@/types/project";
 
-
 const typeToIcon = {
 	Voyage: "plane",
 	Maison_Coloc: "home",
@@ -55,9 +54,11 @@ export function ProjectRow({ project }: ProjectRowProps) {
 
 			<td className="hidden px-6 py-4 md:table-cell">
 				<ParticipantStack
-					participants={project.participants.map((p) => ({
-						participant: { id: p.id, name: p.name, appUser: null as null },
-					})) as IProjectParticipants[]}
+					participants={
+						project.participants.map((p) => ({
+							participant: { id: p.id, name: p.name, appUser: null as null },
+						})) as IProjectParticipants[]
+					}
 				/>
 			</td>
 

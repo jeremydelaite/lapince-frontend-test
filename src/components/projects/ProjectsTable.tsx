@@ -91,7 +91,9 @@ export function ProjectsTable() {
 						<TableHead className="hidden text-right sm:table-cell">
 							Ton solde
 						</TableHead>
-						<TableHead className="w-10" />
+						<TableHead className="w-10">
+							<span className="sr-only">Actions</span>
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>

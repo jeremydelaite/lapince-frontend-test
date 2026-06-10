@@ -1,15 +1,32 @@
-import { CircleFadingArrowUpIcon, Save } from "lucide-react";
+import { CircleFadingArrowUpIcon, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { useProject } from "@/context/ProjectContext";
+import { apiDeleteProject } from "@/services/api";
 import type { IParticipant, UpdateProjectPayload } from "@/types/project";
 import { ParticipantsCard } from "../ParticipantsCard";
 import { ProjectDetailsForm } from "../ProjectDetailsForm";
 
-export function DetailsTab() {
+type DetailsTabProps = {
+	onBudgetUpdated: () => void;
+};
+
+export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 	const params = useParams();
 	const projectId = Number(params.id);
+	const navigate = useNavigate();
 
 	// Controls to check if inputs are editable
 	const [isEditingDetails, setIsEditingDetails] = useState(false);
@@ -27,15 +44,18 @@ export function DetailsTab() {
 		type: undefined,
 	});
 
+	const isArchived = project?.isArchived ?? false;
+
 	// Local state dedicated to participants editing
 	const [participantsFormData, setParticipantsFormData] = useState<
 		IParticipant[]
 	>([]);
 
-	// To replace useEffect([project]), and initialize it only at first loading
-	const [isInitialized, setIsInitialized] = useState(false);
+	// Synchronize formData with project context on every project change.
+	// This ensures the form always reflects the latest server state,
+	// including after a budget deletion (project.budget becomes null → formData.budget becomes undefined).
 	useEffect(() => {
-		if (!project || isInitialized) return;
+		if (!project) return;
 
 		// Synchronize project details from API/context into local form state
 		// This allows controlled inputs to display current values
@@ -60,14 +80,26 @@ export function DetailsTab() {
 			.filter((p): p is IParticipant => p !== undefined);
 
 		setParticipantsFormData(participants);
-		setIsInitialized(true);
-	}, [project, isInitialized]); // Runs every time project changes, or isInitialized is true
-
-	function handleClickDetailsForm() {
-		// If user is already editing and clicks again,
-		// save the modified data before leaving edit mode
+	}, [project]); // Re-runs whenever project context changes (e.g. after save, budget deletion)
+		
+	async function handleClickDetailsForm() {
+    if (isArchived) {
+			toast.warning("Veuillez dé-archiver le projet pour pouvoir le modifier");
+			return;
+		}
+		// Build the payload from current form state.
+		// If the project had a budget and the user disabled the switch (formData.budget is now undefined),
+		// add deleteBudget: true to signal the backend to remove it.
 		if (isEditingDetails) {
-			updateProjectById(projectId, formData);
+			const hadBudget = !!project?.budget;
+			const nowHasBudget = !!formData.budget;
+
+			const payload: UpdateProjectPayload = { ...formData };
+			if (hadBudget && !nowHasBudget) {
+				payload.deleteBudget = true;
+			}
+			await updateProjectById(projectId, payload);
+			onBudgetUpdated();
 		}
 
 		// Toggle edit mode on/off
@@ -75,32 +107,54 @@ export function DetailsTab() {
 	}
 
 	async function handleClickParticipantsForm() {
-		// Same logic as details section:
+		if (isArchived) {
+			toast.warning("Veuillez dé-archiver le projet pour pouvoir le modifier");
+			return;
+		}
 		if (isEditingParticipants) {
-			// Capturer une snapshot stable avant tout await
-			const snapshot = [...participantsFormData];
+			if (!project) {
+				return;
+			}
+			// Snapshot depuis le context — état serveur stable, pas l'état local édité
+			const snapshot = project.projectParticipants
+				.map((pp) => pp.participant)
+				.filter((p): p is IParticipant => p !== undefined);
 
 			try {
 				const response = await updateProjectParticipantsById(
 					projectId,
-					snapshot,
+					participantsFormData,
 				);
-
-				// Reconstruire depuis la réponse API
 				const updated = response
 					.map((r) => r.participant)
 					.filter((p): p is IParticipant => p !== undefined);
 
-				// Resync explicit from API answer, not from project
 				setParticipantsFormData(updated);
 			} catch (err) {
-				console.error("Erreur PATCH participants :", err);
-				// Restaurer le snapshot en cas d'échec
+				toast.error(
+					"Impossible de supprimer le participant s'il a des opérations liées",
+				);
+				console.error("Error PATCH participants :", err);
+				// Restaure l'état serveur, pas l'état local édité
 				setParticipantsFormData(snapshot);
-				return; // Ne pas quitter le mode édition si erreur
+				return;
 			}
 		}
 		setIsEditingParticipants((prev) => !prev);
+	}
+
+	async function handleDelete() {
+		try {
+			const response = await apiDeleteProject(projectId);
+			if (response === 204) {
+				toast.success("Projet supprimé");
+				navigate("/projects");
+			}
+		} catch (err) {
+			toast.error("Erreur : Impossible de supprimer le projet");
+			console.error("Error DELETE project :", err);
+			return;
+		}
 	}
 
 	return (
@@ -121,7 +175,7 @@ export function DetailsTab() {
 				<Button
 					type="button"
 					variant="outline"
-					className={`w-full border-dashed ${isEditingDetails && "bg-yellow-400"}`}
+					className={`w-full border-dashed ${isEditingDetails ? "bg-yellow-400" : ""} ${isArchived ? "opacity-50" : ""}`}
 					onClick={handleClickDetailsForm}
 				>
 					{isEditingDetails ? (
@@ -154,7 +208,7 @@ export function DetailsTab() {
 				<Button
 					type="button"
 					variant="outline"
-					className={`w-full border-dashed ${isEditingParticipants && "bg-yellow-400"}`}
+					className={`w-full border-dashed ${isEditingParticipants ? "bg-yellow-400" : ""} ${isArchived ? "opacity-50" : ""}`}
 					onClick={handleClickParticipantsForm}
 				>
 					{isEditingParticipants ? (
@@ -169,6 +223,45 @@ export function DetailsTab() {
 						</>
 					)}
 				</Button>
+
+				{/* =========================
+			    DELETE PROJECT BUTTON
+			   ========================= */}
+
+				<Dialog>
+					<DialogTrigger
+						className="w-full border-dashed"
+						render={
+							<Button
+								type="button"
+								variant="destructive"
+								className="w-full border-dashed"
+							/>
+						}
+					>
+						<Trash2 className="size-4" />
+						Supprimer le projet
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader className="p-3">
+							<DialogTitle>
+								Êtes-vous sûr de vouloir supprimer ce projet ?
+							</DialogTitle>
+							<DialogDescription>
+								Cette action est irréversible.
+							</DialogDescription>
+						</DialogHeader>
+						<DialogFooter>
+							<DialogClose render={<Button variant="outline" />}>
+								Annuler
+							</DialogClose>
+
+							<Button type="submit" onClick={handleDelete}>
+								Supprimer
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</div>
 		</div>
 	);

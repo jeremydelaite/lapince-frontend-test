@@ -1,4 +1,6 @@
+import { ArrowLeft } from "lucide-react";
 import { useEffect } from "react";
+import { Link } from "react-router";
 import { PublicFooter } from "@/components/landingPage/PublicFooter";
 import { PublicHeader } from "@/components/landingPage/PublicHeader";
 
@@ -12,11 +14,18 @@ export function LegalsPage() {
 
 			<main>
 				<section className="mx-auto w-full max-w-3xl px-10 py-20 text-center sm:px-6 lg:px-8">
+					<Link
+						to="/"
+						className="mb-6 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+					>
+						<ArrowLeft className="size-4" />
+						Retour à l'accueil
+					</Link>
 					<h2 className="text-3xl font-semibold tracking-tight">
 						Politique de confidentialité
 					</h2>
 					<p className="mt-1 text-sm text-muted-foreground">
-						Dernière mise à jour : 28/05/2026
+						Dernière mise à jour : 09/06/2026
 					</p>
 					<article className="text-justify">
 						<h3 className="text-2xl text-center font-semibold tracking-tight py-6">
@@ -42,7 +51,12 @@ export function LegalsPage() {
 							Projet pédagogique réalisé dans le cadre de la formation CDA de
 							O’clock.
 						</p>
-						<p>Contact : [EMAIL_DE_CONTACT] </p>
+						<p>
+							Contact :{" "}
+							<Link to="/contact" className="text-yellow-500 hover:underline">
+								formulaire de contact
+							</Link>
+						</p>
 						<h3 className="text-2xl text-center font-semibold tracking-tight py-6">
 							3. Données collectées
 						</h3>
@@ -178,8 +192,11 @@ export function LegalsPage() {
 							<li> droit à la portabilité des données</li>
 						</ul>
 						<p className="pt-2">
-							Vous pouvez exercer ces droits à l’adresse suivante : 📧
-							[EMAIL_DE_CONTACT]
+							Vous pouvez exercer ces droits via notre{" "}
+							<Link to="/contact" className="text-yellow-500 hover:underline">
+								formulaire de contact
+							</Link>
+							.
 						</p>
 						<h3 className="text-2xl text-center font-semibold tracking-tight py-6">
 							10. Suppression du compte
@@ -216,7 +233,11 @@ export function LegalsPage() {
 						</h3>
 						<p>
 							Pour toute question concernant cette politique ou vos données
-							personnelles : 📧 [EMAIL_DE_CONTACT]
+							personnelle, utilisez notre{" "}
+							<Link to="/contact" className="text-yellow-500 hover:underline">
+								formulaire de contact
+							</Link>
+							.
 						</p>
 						<h3 className="text-2xl text-center font-semibold tracking-tight py-6">
 							{" "}
@@ -233,7 +254,12 @@ export function LegalsPage() {
 							Projet pédagogique réalisé par l’équipe <b>La Pince</b> dans le
 							cadre de la formation CDA de O’clock.
 						</p>
-						<p>Contact : 📧 [EMAIL_DE_CONTACT]</p>
+						<p>
+							Contact :{" "}
+							<Link to="/contact" className="text-yellow-500 hover:underline">
+								formulaire de contact
+							</Link>
+						</p>
 						<h3 className="text-2xl text-center font-semibold tracking-tight py-6">
 							{" "}
 							15. Hébergement

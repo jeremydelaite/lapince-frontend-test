@@ -68,40 +68,48 @@ export function ParticipantsCard({
 				</div>
 
 				{/* Participants list */}
-				<ul className="space-y-2">
-					{participantsFormData.map((participant, index) => (
-						<li
-							key={participant.id ?? participant.tempId}
-							className="flex items-center gap-2"
-						>
-							<Input
-								// Controlled input:
-								// value always comes from React state
-								value={participant.name ?? ""}
-								onChange={(e) =>
-									setParticipantsFormData((prev) =>
-										prev.map((p, i) =>
-											i === index ? { ...p, name: e.target.value } : p,
-										),
-									)
-								}
-								className="flex-1"
-								disabled={!isEditingParticipants}
-							/>
-
-							{/* Delete participant button */}
-							<Button
-								type="button"
-								variant="ghost"
-								size="icon"
-								className="text-muted-foreground hover:text-destructive"
-								onClick={() => handleRemoveParticipant(index)}
+				{participantsFormData.length === 0 ? (
+					<div className="text-xs text-muted-foreground mt-1 text-center">
+						{" "}
+						Aucun participant pour le moment{" "}
+					</div>
+				) : (
+					<ul className="space-y-2">
+						{participantsFormData.map((participant, index) => (
+							<li
+								key={participant.id ?? participant.tempId}
+								className="flex items-center gap-2"
 							>
-								<Trash2 className="size-4" />
-							</Button>
-						</li>
-					))}
-				</ul>
+								<Input
+									// Controlled input:
+									// value always comes from React state
+									value={participant.name ?? ""}
+									onChange={(e) =>
+										setParticipantsFormData((prev) =>
+											prev.map((p, i) =>
+												i === index ? { ...p, name: e.target.value } : p,
+											),
+										)
+									}
+									className="flex-1"
+									disabled={!isEditingParticipants}
+								/>
+
+								{/* Delete participant button */}
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									className="text-muted-foreground hover:text-destructive"
+									disabled={!isEditingParticipants}
+									onClick={() => handleRemoveParticipant(index)}
+								>
+									<Trash2 className="size-4" />
+								</Button>
+							</li>
+						))}
+					</ul>
+				)}
 			</div>
 		</div>
 	);

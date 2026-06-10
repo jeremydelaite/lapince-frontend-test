@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 export function PublicFooter() {
 	return (
 		<footer className="w-full border-t bg-background">
@@ -5,15 +7,15 @@ export function PublicFooter() {
 				<p>© 2026 LaPince</p>
 
 				<nav className="flex items-center gap-6">
-					<a href="/privacy-policy" className="hover:text-foreground">
+					<Link to="/privacy-policy" className="hover:text-foreground">
 						Mentions légales
-					</a>
+					</Link>
 					{/* <a href="/" className="hover:text-foreground">
 						CGU
 					</a> */}
-					<a href="/" className="hover:text-foreground">
+					<Link to="/contact" className="hover:text-foreground">
 						Contact
-					</a>
+					</Link>
 				</nav>
 			</div>
 		</footer>

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Navigate, useParams } from "react-router";
 import { ConnectedHeader } from "@/components/common/ConnectedHeader";
-import { BudgetAlerts } from "@/components/project/BudgetAlerts";
 import { ProjectHeading } from "@/components/project/ProjectHeading";
 import { ProjectTabs } from "@/components/project/ProjectTabs";
 import { useAuth } from "@/context/AuthContext";
@@ -39,11 +38,11 @@ export function ProjectPage() {
 	}
 
 	if (errorCode === 403) {
-		return <div>403 : Accés refusé</div>;
+		return <Navigate to="/forbidden" replace />;
 	}
 
 	if (errorCode === 404) {
-		return <div>404 : Projet introuvable</div>;
+		return <Navigate to="/not-found" replace />;
 	}
 
 	if (isProjectLoading || !project) {
@@ -55,8 +54,7 @@ export function ProjectPage() {
 			<ConnectedHeader />
 			<main className="mx-auto max-w-5xl px-6 py-10">
 				<ProjectHeading project={project} />
-				{/* <BudgetAlerts /> */}
-				<ProjectTabs />
+				<ProjectTabs projectId={projectId} />
 			</main>
 		</>
 	);

@@ -15,7 +15,7 @@ export function StatCard({ icon: Icon, label, value }: StatCardProps) {
 				<p className="text-xs font-medium">{label}</p>
 			</div>
 
-			<p className="text-2xl font-semibold tracking-tight">{value}</p>
+			<h2 className="text-2xl font-semibold tracking-tight">{value}</h2>
 		</div>
 	);
 }

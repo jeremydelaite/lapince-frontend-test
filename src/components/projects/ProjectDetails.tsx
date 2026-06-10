@@ -20,6 +20,7 @@ type ProjectDetailsProps = {
 	expensesCount: number;
 	updatedAt: string;
 	icon: ProjectIcon;
+	color?: string;
 };
 
 const projectIcons = {
@@ -36,11 +37,12 @@ export function ProjectDetails({
 	expensesCount,
 	updatedAt,
 	icon,
+	color = "bg-accent text-accent-foreground",
 }: ProjectDetailsProps) {
 	const Icon = projectIcons[icon];
 	return (
 		<div className="flex min-w-0 items-center gap-3">
-			<span className="inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
+			<span className={`inline-flex size-9 shrink-0 items-center justify-center rounded-md ${color}`}>
 				<Icon className="size-4" />
 			</span>
 			<div className="min-w-0">

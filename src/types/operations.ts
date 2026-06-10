@@ -1,4 +1,5 @@
 export interface IOperationParticipant {
+	isRepartitionAmountCalculated: boolean;
 	repartitionAmount: number;
 	participant: {
 		id: number;
@@ -12,6 +13,7 @@ export interface IOperation {
 	name: string;
 	categoryId: number;
 	amount: number;
+	isAmountCalculated: boolean;
 	date: string;
 	payerParticipantId: number;
 	appUser: {
@@ -33,6 +35,7 @@ export interface IOperationDialogParticipant {
 	initials: string;
 	avatarColor: string;
 	isSelected: boolean;
+	isRepartitionAmountCalculated: boolean;
 	repartitionAmount: string;
 }
 
@@ -41,8 +44,11 @@ export interface IOperationDialogState {
 	projectId: number;
 	operationId: number | null;
 	name: string;
-	amount: number;
+	amount: string;
+	isAmountCalculated: boolean;
+	isBalancedAmount: boolean;
 	categoryId: number | undefined;
+	hasNegativeDistribution: boolean;
 	date: string;
 	payerParticipantId: number | undefined;
 	participants: IOperationDialogParticipant[];
@@ -51,12 +57,14 @@ export interface IOperationDialogState {
 export type CreateOperationPayload = {
 	name: string;
 	amount: number;
+	isAmountCalculated: boolean;
 	date: string;
 	categoryId: number;
 	projectId: number;
 	payerParticipantId: number;
 	operationParticipants: {
 		participantId: number;
+		isRepartitionAmountCalculated: boolean;
 		repartitionAmount: number;
 	}[];
 };

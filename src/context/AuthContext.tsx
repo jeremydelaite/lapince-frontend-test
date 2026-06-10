@@ -47,6 +47,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			.finally(() => setIsLoading(false));
 	}, []);
 
+	// Listen for 401 responses — silently log out if the token expires mid-session
+	useEffect(() => {
+		function handleUnauthorized() {
+			localStorage.removeItem("token");
+			setUser(null);
+		}
+		window.addEventListener("auth:unauthorized", handleUnauthorized);
+		return () =>
+			window.removeEventListener("auth:unauthorized", handleUnauthorized);
+	}, []);
+
 	// Calls POST /api/auth/login, stores the token, sets the user
 	async function login(payload: LoginPayload) {
 		const { user, token } = await apiLogin(payload);

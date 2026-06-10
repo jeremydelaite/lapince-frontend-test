@@ -107,6 +107,17 @@ body {
 	min-width: 320px;
 }
 
+/* To remove arrows in numbers inputs fields */
+.no-spinner {
+	-moz-appearance: textfield;
+}
+
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
 @theme inline {
 	--font-heading: var(--font-sans);
 	--font-sans: "Geist Variable", sans-serif;

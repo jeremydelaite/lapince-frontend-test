@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useEffect } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,6 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useProject } from "@/context/ProjectContext";
+import { PROJECT_TYPE_LABELS } from "@/lib/utils";
 import type { UpdateProjectPayload } from "@/types/project";
 
 type ProjectDetailsFormProps = {
@@ -86,7 +87,11 @@ export function ProjectDetailsForm({
 					disabled={!isEditingDetails}
 				>
 					<SelectTrigger>
-						<SelectValue placeholder="Choisir un type" />
+						{/* To display correctly type label */}
+						<SelectValue>
+							{PROJECT_TYPE_LABELS[formData.type ?? project.type] ??
+								"Choisir un type"}
+						</SelectValue>
 					</SelectTrigger>
 					<SelectContent>
 						<SelectItem value="Voyage">Voyage</SelectItem>
@@ -131,6 +136,7 @@ export function ProjectDetailsForm({
 							<Label htmlFor="project-budget">Budget global</Label>
 							<div className="relative">
 								<Input
+									className=" no-spinner"
 									id="project-budget"
 									type="number"
 									disabled={!isEditingDetails}

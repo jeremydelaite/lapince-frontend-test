@@ -5,6 +5,7 @@ import {
 	TrainFront,
 	Utensils,
 } from "lucide-react";
+import { toast } from "sonner";
 import { ParticipantStack } from "@/components/common/ParticipantStack";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useCategories } from "@/context/CategoriesContext";
@@ -14,6 +15,7 @@ import { getAvatarColor } from "@/utils/avatarColors";
 
 type OperationsRowProps = {
 	operation: IOperation;
+	isArchived?: boolean;
 	setSelectedOperation: (operation: IOperation | null) => void;
 	setIsOperationDialogOpen: (open: boolean) => void;
 };
@@ -29,6 +31,7 @@ const icons = [
 
 export function OperationsRow({
 	operation,
+	isArchived,
 	setSelectedOperation,
 	setIsOperationDialogOpen,
 }: OperationsRowProps) {
@@ -50,12 +53,19 @@ export function OperationsRow({
 	const payerParticipantName = getPayerParticipantName();
 
 	function openOperationDialog() {
+		if (isArchived) {
+			toast.warning("Veuillez dé-archiver le projet pour pouvoir le modifier");
+			return;
+		}
 		setSelectedOperation(operation);
 		setIsOperationDialogOpen(true);
 	}
 
 	return (
-		<TableRow className="hover:bg-muted/50" onClick={openOperationDialog}>
+		<TableRow
+			className={`hover:bg-muted/50 ${isArchived ? "opacity-50" : "cursor-pointer"}`}
+			onClick={openOperationDialog}
+		>
 			<TableCell>
 				<div className="flex items-center gap-3">
 					<span
@@ -79,7 +89,7 @@ export function OperationsRow({
 			<TableCell className="hidden md:table-cell">
 				<div className="flex items-center gap-2">
 					<span
-						className={`flex size-6 items-center justify-center rounded-full text-[10px] font-medium text-white ${getAvatarColor(payerParticipantName ?? "")}`}
+						className={`flex size-6 items-center justify-center rounded-full text-[11px] font-medium text-white ${getAvatarColor(payerParticipantName ?? "")}`}
 					>
 						{payerParticipantName?.slice(0, 2).toUpperCase()}
 					</span>

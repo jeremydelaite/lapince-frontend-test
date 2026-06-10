@@ -26,4 +26,5 @@ export type ICategories = {
 	id: number;
 	name: string;
 	color: string;
+	count?: number;
 };

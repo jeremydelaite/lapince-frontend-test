@@ -5,13 +5,13 @@ export default interface IProject {
 	description?: string;
 	isArchived: boolean;
 	projectParticipants: IProjectParticipants[];
-	budget: IBudget;
+	budget: IBudget | null;
 	type: ProjectType;
 }
 
 export interface IProjectParticipants {
-	id?: number;
-	participant?: IParticipant;
+	id: number;
+	participant: IParticipant;
 }
 
 export interface IParticipant {
@@ -42,6 +42,7 @@ export type UpdateProjectPayload = {
 		limitCriteria?: number;
 	};
 	participants?: IParticipant[];
+	deleteBudget?: boolean;
 };
 
 export type UpdateProjectResponse = {

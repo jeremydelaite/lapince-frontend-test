@@ -1,7 +1,14 @@
-import { ArrowRightIcon, LayoutDashboardIcon } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/context/ThemesContext";
 
 export function Hero() {
+	const { theme } = useTheme();
+	const isDark =
+		theme === "dark" ||
+		(theme === "system" &&
+			window.matchMedia("(prefers-color-scheme: dark)").matches);
 	return (
 		<section className="w-full border-b bg-background">
 			<div className="mx-auto grid w-full max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
@@ -18,7 +25,7 @@ export function Hero() {
 					<div className="mt-8 flex flex-wrap items-center gap-4">
 						<Button
 							className="bg-primary text-primary-foreground hover:bg-primary/80"
-							render={<a href="/register">Commencer</a>}
+							render={<Link to="/register">Commencer</Link>}
 						>
 							Commencer
 							<ArrowRightIcon />
@@ -26,16 +33,17 @@ export function Hero() {
 
 						<Button
 							variant="outline"
-							render={<a href="/login">J'ai déjà un compte</a>}
+							render={<Link to="/login">J'ai déjà un compte</Link>}
 						></Button>
 					</div>
 				</div>
 
-				<div className="flex aspect-[4\/3] items-center justify-center rounded-lg border-2 border-dashed bg-muted text-muted-foreground">
-					<div className="text-center">
-						<LayoutDashboardIcon className="mx-auto mb-2 size-10" />
-						<p className="text-sm">[ aperçu dashboard ]</p>
-					</div>
+				<div className="flex items-center justify-center rounded-lg overflow-hidden border border-border">
+					<img
+						src={isDark ? "/dashboard.dark.png" : "/dashboard.png"}
+						alt="Aperçu du dashboard LaPince"
+						className="w-full h-auto rounded-lg"
+					/>
 				</div>
 			</div>
 		</section>

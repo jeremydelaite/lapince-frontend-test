@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { StrictMode } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { useAuth } from "@/context/AuthContext";
@@ -9,25 +10,27 @@ import { LegalsPage } from "@/pages/LegalsPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { ProjectPage } from "@/pages/ProjectPage";
 import { ProjectsPage } from "@/pages/ProjectsPage";
-import { Loader2 } from "lucide-react";
+import { ServerErrorPage } from "@/pages/ServerErrorPage";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
 	const { user, isLoading } = useAuth();
-	if (isLoading) return (
-		<div className="flex h-screen items-center justify-center">
-			<Loader2 className="size-8 animate-spin text-muted-foreground" />
-		</div>
-	);
+	if (isLoading)
+		return (
+			<div className="flex h-screen items-center justify-center">
+				<Loader2 className="size-8 animate-spin text-muted-foreground" />
+			</div>
+		);
 	return user ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
 	const { user, isLoading } = useAuth();
-	if (isLoading) return (
-		<div className="flex h-screen items-center justify-center">
-			<Loader2 className="size-8 animate-spin text-muted-foreground" />
-		</div>
-	);
+	if (isLoading)
+		return (
+			<div className="flex h-screen items-center justify-center">
+				<Loader2 className="size-8 animate-spin text-muted-foreground" />
+			</div>
+		);
 	return user ? <Navigate to="/projects" replace /> : <>{children}</>;
 }
 
@@ -79,6 +82,7 @@ export function AppRouter() {
 					<Route path="/privacy-policy" element={<LegalsPage />} />
 					<Route path="/contact" element={<ContactPage />} />
 					<Route path="/forbidden" element={<ForbiddenPage />} />
+					<Route path="/server-error" element={<ServerErrorPage />} />
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 			</BrowserRouter>

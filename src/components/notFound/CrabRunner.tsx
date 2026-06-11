@@ -4,9 +4,12 @@ import { useEffect, useRef } from "react";
 // A pixel-art crab jumps over boiling pots. Space / ArrowUp / tap to jump.
 
 const WIDTH = 600;
-const HEIGHT = 170;
-const GROUND_Y = 150;
+const HEIGHT = 200;
+const GROUND_Y = 180;
 const PIXEL = 3;
+// Render upscale factor: keeps the simulation logic at 600px wide
+// while producing a sharp canvas at larger display sizes
+const SCALE = 1.5;
 
 const GRAVITY = 0.55;
 const JUMP_VELOCITY = -10.5;
@@ -179,7 +182,7 @@ export function CrabRunner({ isDark }: { isDark: boolean }) {
 			return;
 		}
 
-		const dpr = window.devicePixelRatio || 1;
+		const dpr = (window.devicePixelRatio || 1) * SCALE;
 		canvas.width = WIDTH * dpr;
 		canvas.height = HEIGHT * dpr;
 		ctx.scale(dpr, dpr);
@@ -306,10 +309,10 @@ export function CrabRunner({ isDark }: { isDark: boolean }) {
 			ctx.textAlign = "center";
 			ctx.fillStyle = foreground;
 			ctx.font = "bold 16px 'Courier New', monospace";
-			ctx.fillText(title, WIDTH / 2, 64);
+			ctx.fillText(title, WIDTH / 2, 80);
 			ctx.fillStyle = muted;
 			ctx.font = "12px 'Courier New', monospace";
-			ctx.fillText(subtitle, WIDTH / 2, 84);
+			ctx.fillText(subtitle, WIDTH / 2, 100);
 		};
 
 		const update = (dt: number) => {
@@ -409,7 +412,7 @@ export function CrabRunner({ isDark }: { isDark: boolean }) {
 			ref={canvasRef}
 			role="img"
 			aria-label="Mini-jeu : La Pince saute par-dessus des marmites bouillonnantes"
-			className="mx-auto my-16 w-full max-w-[600px] cursor-pointer touch-none select-none"
+			className="mx-auto my-16 w-full max-w-[900px] cursor-pointer touch-none select-none"
 			style={{ aspectRatio: `${WIDTH} / ${HEIGHT}` }}
 		/>
 	);

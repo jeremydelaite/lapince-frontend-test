@@ -204,7 +204,7 @@ export function OperationDialog({
 										{selectedCategory?.name ?? "Catégorie"}
 									</SelectValue>
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent side="bottom">
 									{categories.map((category) => (
 										<SelectItem key={category.id} value={String(category.id)}>
 											{category.name}
@@ -278,11 +278,11 @@ export function OperationDialog({
 														(op) =>
 															op.participantId === participant.participantId
 																? {
-																		...op,
-																		isSelected: event.target.checked,
-																		repartitionAmount: "",
-																		isRepartitionAmountCalculated: true,
-																	}
+																	...op,
+																	isSelected: event.target.checked,
+																	repartitionAmount: "",
+																	isRepartitionAmountCalculated: true,
+																}
 																: op,
 													),
 												})
@@ -315,7 +315,7 @@ export function OperationDialog({
 											className="h-8 pr-6 text-right text-xs tabular-nums placeholder:italic focus:placeholder-transparent"
 											value={
 												participant.isSelected &&
-												!participant.isRepartitionAmountCalculated
+													!participant.isRepartitionAmountCalculated
 													? participant.repartitionAmount
 													: ""
 											}
@@ -325,11 +325,11 @@ export function OperationDialog({
 														(op) =>
 															op.participantId === participant.participantId
 																? {
-																		...op,
-																		repartitionAmount: event.target.value,
-																		isRepartitionAmountCalculated:
-																			event.target.value === "",
-																	}
+																	...op,
+																	repartitionAmount: event.target.value,
+																	isRepartitionAmountCalculated:
+																		event.target.value === "",
+																}
 																: op,
 													),
 												})

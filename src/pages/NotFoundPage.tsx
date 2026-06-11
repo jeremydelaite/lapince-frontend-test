@@ -31,10 +31,12 @@ export function NotFoundPage() {
 						<ArrowLeft className="size-4" />
 						{user ? "Retour aux projets" : "Retour à l'accueil"}
 					</Link>
-					<h2 className="text-3xl font-semibold tracking-tight">
-						La Pince a fouillé partout, <br />
-						mais cette page est introuvable
-					</h2>
+					{!showGame && (
+						<h2 className="text-3xl font-semibold tracking-tight">
+							La Pince a fouillé partout, <br />
+							mais cette page est introuvable
+						</h2>
+					)}
 					{showGame ? (
 						<CrabRunner isDark={isDark} />
 					) : (

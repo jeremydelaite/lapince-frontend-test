@@ -12,7 +12,14 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!node_modules", "!.next", "!dist", "!docs", "!src/components/ui/**"]
+		"includes": [
+			"**",
+			"!node_modules",
+			"!.next",
+			"!dist",
+			"!docs",
+			"!src/components/ui"
+		]
 	},
 	"formatter": {
 		"enabled": true,

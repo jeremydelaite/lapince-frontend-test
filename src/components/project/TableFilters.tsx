@@ -33,7 +33,7 @@ export function TableFilters({
 	return (
 		<div className="mb-3 flex items-center justify-between gap-3">
 			{/* Mobile */}
-			<div className="w-full md:hidden">
+			<div className="w-full lg:hidden">
 				<label htmlFor="category-filter" className="sr-only">
 					Filtrer les opérations par catégorie
 				</label>
@@ -68,7 +68,7 @@ export function TableFilters({
 			</div>
 
 			{/* Desktop */}
-			<div className="hidden items-center rounded-md bg-muted p-1 text-sm md:inline-flex">
+			<div className="hidden items-center rounded-md bg-muted p-1 text-sm lg:inline-flex">
 				<button
 					type="button"
 					onClick={() => onValueChange(null)}

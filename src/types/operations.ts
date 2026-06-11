@@ -48,10 +48,10 @@ export interface IOperationDialogState {
 	isAmountCalculated: boolean;
 	isBalancedAmount: boolean;
 	categoryId: number | undefined;
-	hasNegativeDistribution: boolean;
 	date: string;
 	payerParticipantId: number | undefined;
 	participants: IOperationDialogParticipant[];
+	hasSelectedParticipant: boolean;
 }
 
 export type CreateOperationPayload = {

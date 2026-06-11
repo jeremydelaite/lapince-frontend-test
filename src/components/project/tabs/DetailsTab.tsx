@@ -16,6 +16,10 @@ import {
 import { useProject } from "@/context/ProjectContext";
 import { apiDeleteProject } from "@/services/api";
 import type { IParticipant, UpdateProjectPayload } from "@/types/project";
+import {
+	validateProjectDetails,
+	validateProjectParticipants,
+} from "@/validation/project.validation";
 import { ParticipantsCard } from "../ParticipantsCard";
 import { ProjectDetailsForm } from "../ProjectDetailsForm";
 
@@ -31,6 +35,13 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 	// Controls to check if inputs are editable
 	const [isEditingDetails, setIsEditingDetails] = useState(false);
 	const [isEditingParticipants, setIsEditingParticipants] = useState(false);
+	// Controls to check if inputs are in a false format
+	const [detailsFormErrors, setDetailsFormErrors] = useState<
+		Record<string, string>
+	>({});
+	const [participantFormErrors, setParticipantFormErrors] = useState<
+		Record<string, string>
+	>({});
 
 	// Access current project data and update function from context
 	const { updateProjectById, updateProjectParticipantsById, project } =
@@ -81,9 +92,9 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 
 		setParticipantsFormData(participants);
 	}, [project]); // Re-runs whenever project context changes (e.g. after save, budget deletion)
-		
+
 	async function handleClickDetailsForm() {
-    if (isArchived) {
+		if (isArchived) {
 			toast.warning("Veuillez dé-archiver le projet pour pouvoir le modifier");
 			return;
 		}
@@ -93,6 +104,13 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 		if (isEditingDetails) {
 			const hadBudget = !!project?.budget;
 			const nowHasBudget = !!formData.budget;
+			// Checks if form is valide before go further
+			const errors = validateProjectDetails(formData);
+			setDetailsFormErrors(errors);
+			// Stop before go further if error
+			if (Object.keys(errors).length > 0) {
+				return;
+			}
 
 			const payload: UpdateProjectPayload = { ...formData };
 			if (hadBudget && !nowHasBudget) {
@@ -120,6 +138,11 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 				.map((pp) => pp.participant)
 				.filter((p): p is IParticipant => p !== undefined);
 
+			// Front check inputs
+			const errors = validateProjectParticipants(participantsFormData);
+			setParticipantFormErrors(errors);
+
+			if (Object.keys(errors).length > 0) return;
 			try {
 				const response = await updateProjectParticipantsById(
 					projectId,
@@ -131,10 +154,13 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 
 				setParticipantsFormData(updated);
 			} catch (err) {
-				toast.error(
-					"Impossible de supprimer le participant s'il a des opérations liées",
-				);
 				console.error("Error PATCH participants :", err);
+				// Handle backen error inline if project particpant add operations
+				setParticipantFormErrors({
+					global:
+						"Impossible de supprimer un participant ayant des opérations liées.",
+				});
+
 				// Restaure l'état serveur, pas l'état local édité
 				setParticipantsFormData(snapshot);
 				return;
@@ -170,6 +196,7 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 					setFormData={setFormData}
 					// Enables/disables inputs
 					isEditingDetails={isEditingDetails}
+					detailsFormErrors={detailsFormErrors}
 				/>
 
 				<Button
@@ -203,6 +230,7 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 					setParticipantsFormData={setParticipantsFormData}
 					// Enables/disables participant inputs
 					isEditingParticipants={isEditingParticipants}
+					participantFormErrors={participantFormErrors}
 				/>
 
 				<Button

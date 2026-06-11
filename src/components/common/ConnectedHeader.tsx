@@ -22,10 +22,11 @@ export function ConnectedHeader() {
 	const navigate = useNavigate();
 	const { theme, setTheme } = useTheme();
 
-	const isDark = theme === "light";
-
+	const isDark = theme === "dark" ||
+		(theme === "system" &&
+			window.matchMedia("(prefers-color-scheme: dark)").matches);
 	function toggleDark() {
-		setTheme(isDark ? "dark" : "light");
+		setTheme(isDark ? "light" : "dark");
 	}
 
 	async function handleLogout() {

@@ -1,5 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
 	Dialog,
 	DialogContent,
@@ -9,6 +10,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import {
 	Select,
 	SelectContent,
@@ -117,7 +123,8 @@ export function OperationDialog({
 				})),
 		};
 	}
-
+	// Update the dialog state and recalculate all derived amounts
+	// to keep the operation data consistent.
 	function updateOperationDialogState(updates: Partial<IOperationDialogState>) {
 		if (!operationDialogState) return;
 		const nextState = {
@@ -125,6 +132,20 @@ export function OperationDialog({
 			...updates,
 		};
 		setOperationDialogState(recalculateOperationState(nextState));
+	}
+
+	// Format a Date object as YYYY-MM-DD in local time.
+	// Used by the shadcn Calendar to avoid timezone shifts caused by
+	// Date.toISOString() and to keep the selected day unchanged.
+	function formatDateLocal(date: Date) {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	}
+
+	function parseDateLocal(date: string) {
+		return new Date(`${date}T00:00:00`);
 	}
 
 	return (
@@ -161,12 +182,17 @@ export function OperationDialog({
 									type="number"
 									// min="0.01"
 									step="0.01"
+									min="0"
 									placeholder={
 										operationDialogState?.isAmountCalculated
 											? operationDialogState.amount || "auto"
 											: "auto"
 									}
-									className="pr-8 text-right font-medium focus:placeholder-transparent"
+									className={`pr-8 text-right font-medium focus:placeholder-transparent ${
+										Number(operationDialogState?.amount || 0) < 0
+											? "border-red-500 focus-visible:ring-red-500"
+											: ""
+									}`}
 									value={
 										!operationDialogState?.isAmountCalculated
 											? (operationDialogState?.amount ?? "")
@@ -187,7 +213,7 @@ export function OperationDialog({
 					</div>
 
 					<div className="grid grid-cols-10 gap-3">
-						<div className="col-span-5 space-y-2">
+						<div className="col-span-7 space-y-2">
 							<Label>Catégorie</Label>
 
 							<Select
@@ -214,18 +240,41 @@ export function OperationDialog({
 							</Select>
 						</div>
 
-						<div className="col-span-5 space-y-2">
+						<div className="col-span-3 space-y-2">
 							<Label htmlFor="operation-date">Date</Label>
-
-							<Input
-								required
-								id="operation-date"
-								type="date"
-								value={operationDialogState?.date ?? ""}
-								onChange={(event) =>
-									updateOperationDialogState({ date: event.target.value })
-								}
-							/>
+							<Popover>
+								<PopoverTrigger
+									render={
+										<Button
+											id="operation-date"
+											type="button"
+											variant="outline"
+											className="w-full justify-start text-left font-normal"
+										/>
+									}
+								>
+									{operationDialogState?.date
+										? parseDateLocal(
+												operationDialogState.date,
+											).toLocaleDateString("fr-FR")
+										: "Sélectionner une date"}
+								</PopoverTrigger>
+								<PopoverContent className="w-auto p-0">
+									<Calendar
+										mode="single"
+										selected={
+											operationDialogState?.date
+												? parseDateLocal(operationDialogState.date)
+												: undefined
+										}
+										onSelect={(date) =>
+											updateOperationDialogState({
+												date: date ? formatDateLocal(date) : "",
+											})
+										}
+									/>
+								</PopoverContent>
+							</Popover>{" "}
 						</div>
 					</div>
 
@@ -260,6 +309,24 @@ export function OperationDialog({
 					<div className="space-y-2">
 						<div className="flex items-baseline justify-between">
 							<Label>Participants actifs</Label>
+							<label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+								<input
+									type="checkbox"
+									className="size-4"
+									checked={operationDialogState?.participants.every((p) => p.isSelected) ?? false}
+									onChange={(event) =>
+										updateOperationDialogState({
+											participants: operationDialogState!.participants.map((p) => ({
+												...p,
+												isSelected: event.target.checked,
+												repartitionAmount: "",
+												isRepartitionAmountCalculated: true,
+											})),
+										})
+									}
+								/>
+								Tout sélectionner
+							</label>
 						</div>
 
 						<ul className="overflow-hidden rounded-md border border-border">
@@ -278,11 +345,11 @@ export function OperationDialog({
 														(op) =>
 															op.participantId === participant.participantId
 																? {
-																	...op,
-																	isSelected: event.target.checked,
-																	repartitionAmount: "",
-																	isRepartitionAmountCalculated: true,
-																}
+																		...op,
+																		isSelected: event.target.checked,
+																		repartitionAmount: "",
+																		isRepartitionAmountCalculated: true,
+																	}
 																: op,
 													),
 												})
@@ -312,10 +379,14 @@ export function OperationDialog({
 														? participant.repartitionAmount || "auto"
 														: ""
 											}
-											className="h-8 pr-6 text-right text-xs tabular-nums placeholder:italic focus:placeholder-transparent"
+											className={`h-8 pr-6 text-right text-xs tabular-nums placeholder:italic focus:placeholder-transparent ${
+												Number(participant.repartitionAmount || 0) < 0
+													? "border-red-500 focus-visible:ring-red-500"
+													: ""
+											}`}
 											value={
 												participant.isSelected &&
-													!participant.isRepartitionAmountCalculated
+												!participant.isRepartitionAmountCalculated
 													? participant.repartitionAmount
 													: ""
 											}
@@ -325,11 +396,11 @@ export function OperationDialog({
 														(op) =>
 															op.participantId === participant.participantId
 																? {
-																	...op,
-																	repartitionAmount: event.target.value,
-																	isRepartitionAmountCalculated:
-																		event.target.value === "",
-																}
+																		...op,
+																		repartitionAmount: event.target.value,
+																		isRepartitionAmountCalculated:
+																			event.target.value === "",
+																	}
 																: op,
 													),
 												})
@@ -371,7 +442,13 @@ export function OperationDialog({
 								>
 									Annuler
 								</Button>
-								<Button type="submit" disabled={Boolean(operationError)}>
+								<Button
+									type="submit"
+									disabled={Boolean(
+										operationError ||
+											!operationDialogState?.hasSelectedParticipant,
+									)}
+								>
 									{dialogMode === "edit" ? "Modifier" : "Créer"}
 								</Button>
 							</div>

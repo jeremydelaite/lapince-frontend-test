@@ -16,10 +16,14 @@ const typeToIcon = {
 
 const typeToColor = {
 	Voyage: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-	Maison_Coloc: "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400",
-	Anniversaire: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
-	Repas_Sortie: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
-	Pro_Travail: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
+	Maison_Coloc:
+		"bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400",
+	Anniversaire:
+		"bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
+	Repas_Sortie:
+		"bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+	Pro_Travail:
+		"bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
 	Autre: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400",
 } as const;
 
@@ -40,7 +44,9 @@ type ProjectRowProps = {
 
 export function ProjectRow({ project }: ProjectRowProps) {
 	const icon = typeToIcon[project.type as keyof typeof typeToIcon] ?? "folder";
-	const color = typeToColor[project.type as keyof typeof typeToColor] ?? "bg-zinc-100 text-zinc-500";
+	const color =
+		typeToColor[project.type as keyof typeof typeToColor] ??
+		"bg-zinc-100 text-zinc-500";
 	const spent = project.budget?.spent ?? 0;
 	const limit = project.budget?.limit ?? 0;
 	const percent =

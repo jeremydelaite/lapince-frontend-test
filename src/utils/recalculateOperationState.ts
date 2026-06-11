@@ -9,24 +9,21 @@ export function getOperationDialogError(
 	if (state.isAmountCalculated) {
 		return null;
 	}
-
-	const selectedParticipants = state.participants.filter((p) => p.isSelected);
-	const fixedAmount = selectedParticipants
-		.filter((p) => !p.isRepartitionAmountCalculated)
-		.reduce(
-			(sum, participant) => sum + Number(participant.repartitionAmount || 0),
-			0,
-		);
-	const operationAmount = Number(state.amount || 0);
-
-	if (fixedAmount > operationAmount) {
-		return "La somme des montants saisis dépasse le montant global.";
+	const selectedParticipants = state.participants.filter(
+		(participant) => participant.isSelected,
+	);
+	if (
+		Number(state.amount || 0) < 0 ||
+		selectedParticipants.some(
+			(participant) => Number(participant.repartitionAmount || 0) < 0,
+		) ||
+		Number(state.amount) < 0
+	) {
+		return "Les montants négatifs ne sont pas autorisés.";
 	}
-
-	if (!state.isBalancedAmount) {
+	if (state.hasSelectedParticipant && !state.isBalancedAmount) {
 		return "La somme des participants ne correspond pas au montant renseigné.";
 	}
-
 	return null;
 }
 
@@ -74,6 +71,7 @@ export function recalculateOperationState(
 	state: IOperationDialogState,
 ): IOperationDialogState {
 	const selectedParticipants = state.participants.filter((p) => p.isSelected);
+	const hasSelectedParticipant = selectedParticipants.length > 0;
 
 	const selectedParticipantsNotCalculated = selectedParticipants.filter(
 		(p) => !p.isRepartitionAmountCalculated,
@@ -96,6 +94,7 @@ export function recalculateOperationState(
 			participants: nextParticipants,
 			amount: String(amount),
 			isBalancedAmount: true,
+			hasSelectedParticipant: hasSelectedParticipant,
 		};
 	}
 
@@ -117,5 +116,6 @@ export function recalculateOperationState(
 		...state,
 		participants: nextParticipants,
 		isBalancedAmount: balancedAmount,
+		hasSelectedParticipant: hasSelectedParticipant,
 	};
 }

@@ -42,7 +42,9 @@ export function ProjectDetails({
 	const Icon = projectIcons[icon];
 	return (
 		<div className="flex min-w-0 items-center gap-3">
-			<span className={`inline-flex size-9 shrink-0 items-center justify-center rounded-md ${color}`}>
+			<span
+				className={`inline-flex size-9 shrink-0 items-center justify-center rounded-md ${color}`}
+			>
 				<Icon className="size-4" />
 			</span>
 			<div className="min-w-0">

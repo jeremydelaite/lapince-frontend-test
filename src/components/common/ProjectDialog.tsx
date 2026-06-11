@@ -23,6 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { useCreateProjectMutation } from "@/lib/useProjectsQuery";
+import { toast } from "sonner";
 
 type Participant = { id: number; name: string };
 
@@ -84,6 +85,16 @@ export function ProjectDialog({
 	function handleSubmit(e: React.SubmitEvent) {
 		e.preventDefault();
 
+		if (alertEnabled && !budgetAmount) {
+			toast.warning("Veuillez entrer un montant de budget");
+			return;
+		}
+
+		if (Number(budgetAmount) >= 100_000_000) {
+			toast.warning("Le montant du budget ne peut pas dépasser 8 chiffres");
+			return;
+		}
+
 		createProject(
 			{
 				name,
@@ -91,10 +102,10 @@ export function ProjectDialog({
 				type,
 				budget: alertEnabled
 					? {
-							amount: Number(budgetAmount),
-							alertEnabled,
-							limitCriteria,
-						}
+						amount: Number(budgetAmount),
+						alertEnabled,
+						limitCriteria,
+					}
 					: undefined,
 				// Prepend the current user if includeMe is checkek
 				participants: [

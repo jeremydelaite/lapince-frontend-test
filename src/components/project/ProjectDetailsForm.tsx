@@ -19,11 +19,13 @@ type ProjectDetailsFormProps = {
 	formData: UpdateProjectPayload;
 	setFormData: Dispatch<SetStateAction<UpdateProjectPayload>>;
 	isEditingDetails: boolean;
+	detailsFormErrors: Record<string, string>;
 };
 export function ProjectDetailsForm({
 	formData,
 	setFormData,
 	isEditingDetails,
+	detailsFormErrors,
 }: ProjectDetailsFormProps) {
 	const { isLoading: isProjectLoading, project } = useProject();
 
@@ -52,6 +54,9 @@ export function ProjectDetailsForm({
 					}
 					disabled={!isEditingDetails}
 				/>
+				{detailsFormErrors.name && (
+					<p className="text-sm text-red-500">{detailsFormErrors.name}</p>
+				)}
 			</div>
 
 			<div className="space-y-2">
@@ -69,6 +74,11 @@ export function ProjectDetailsForm({
 					}
 					disabled={!isEditingDetails}
 				/>
+				{detailsFormErrors.description && (
+					<p className="text-sm text-red-500">
+						{detailsFormErrors.description}
+					</p>
+				)}
 			</div>
 
 			<div className="space-y-2">
@@ -158,6 +168,11 @@ export function ProjectDetailsForm({
 									€
 								</span>
 							</div>
+							{detailsFormErrors.amount && (
+								<p className="text-sm text-red-500">
+									{detailsFormErrors.amount}
+								</p>
+							)}
 						</div>
 
 						<div className="flex items-center gap-3">

@@ -9,12 +9,14 @@ type ProjectParticipantsFormProps = {
 	participantsFormData: IParticipant[];
 	setParticipantsFormData: Dispatch<SetStateAction<IParticipant[]>>;
 	isEditingParticipants: boolean;
+	participantFormErrors: Record<string, string>;
 };
 
 export function ParticipantsCard({
 	participantsFormData,
 	setParticipantsFormData,
 	isEditingParticipants,
+	participantFormErrors,
 }: ProjectParticipantsFormProps) {
 	// Removes a participant from the local state
 	// The participant is identified here by its position in the array
@@ -94,6 +96,11 @@ export function ParticipantsCard({
 									className="flex-1"
 									disabled={!isEditingParticipants}
 								/>
+								{participantFormErrors[`name-${index}`] && (
+									<p className="text-sm text-red-500">
+										{participantFormErrors[`name-${index}`]}
+									</p>
+								)}
 
 								{/* Delete participant button */}
 								<Button
@@ -109,6 +116,11 @@ export function ParticipantsCard({
 							</li>
 						))}
 					</ul>
+				)}
+				{participantFormErrors.global && (
+					<p className="text-sm text-red-500 mb-2">
+						{participantFormErrors.global}
+					</p>
 				)}
 			</div>
 		</div>

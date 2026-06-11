@@ -35,7 +35,7 @@ export function ForbiddenPage() {
 						Pas de pince, pas de surimi.
 					</h2>
 					<img
-						src={isDark ? "/lapince404dark.png" : "/lapince404.png"}
+						src={isDark ? "/lapince403dark.png" : "/lapince403.png"}
 						alt="La Pince a fouillé partout, mais cette page est introuvable"
 						className="mx-auto mt-8 w-64 md:w-80 lg:w-96 h-auto"
 					/>

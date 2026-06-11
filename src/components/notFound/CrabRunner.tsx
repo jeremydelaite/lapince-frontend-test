@@ -162,8 +162,11 @@ export function CrabRunner({ isDark }: { isDark: boolean }) {
 	const colorsRef = useRef(readThemeColors(isDark));
 
 	useEffect(() => {
-		// Re-read CSS variables whenever the theme changes
-		colorsRef.current = readThemeColors(isDark);
+		// Re-read CSS variables after the theme class has been applied to <html>
+		const id = requestAnimationFrame(() => {
+			colorsRef.current = readThemeColors(isDark);
+		});
+		return () => cancelAnimationFrame(id);
 	}, [isDark]);
 
 	useEffect(() => {

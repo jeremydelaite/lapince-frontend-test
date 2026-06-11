@@ -38,7 +38,7 @@ export function NotFoundPage() {
 						</h2>
 					)}
 					{showGame ? (
-						<CrabRunner isDark={isDark} />
+						<CrabRunner key={isDark ? "dark" : "light"} isDark={isDark} />
 					) : (
 						<button
 							type="button"

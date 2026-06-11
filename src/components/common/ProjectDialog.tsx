@@ -1,5 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -23,7 +24,6 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { useCreateProjectMutation } from "@/lib/useProjectsQuery";
-import { toast } from "sonner";
 
 type Participant = { id: number; name: string };
 
@@ -102,10 +102,10 @@ export function ProjectDialog({
 				type,
 				budget: alertEnabled
 					? {
-						amount: Number(budgetAmount),
-						alertEnabled,
-						limitCriteria,
-					}
+							amount: Number(budgetAmount),
+							alertEnabled,
+							limitCriteria,
+						}
 					: undefined,
 				// Prepend the current user if includeMe is checkek
 				participants: [

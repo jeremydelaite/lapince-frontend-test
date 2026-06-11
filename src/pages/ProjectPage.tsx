@@ -45,6 +45,10 @@ export function ProjectPage() {
 		return <Navigate to="/not-found" replace />;
 	}
 
+	if (errorCode === 500) {
+		return <Navigate to="/server-error" replace />;
+	}
+
 	if (isProjectLoading || !project) {
 		return <div>Loading...</div>;
 	}

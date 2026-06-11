@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import type {
 	CategoriesResponse,
 	ICategories,
@@ -64,9 +65,25 @@ async function handleResponse<T>(
 ): Promise<T> {
 	if (res.status === 401 && !skipUnauthorized) {
 		// Token expired — notify the app to log out
+		toast.error("Votre session a expiré. Veuillez vous reconnecter.");
 		window.dispatchEvent(new Event("auth:unauthorized"));
 	}
+
 	if (!res.ok) {
+		switch (res.status) {
+			case 429:
+				toast.error(
+					"Vous avez effectué trop de requêtes. Réessayez dans quelques minutes.",
+				);
+				break;
+
+			case 500:
+				toast.error(
+					"Une erreur inattendue est survenue. Veuillez réessayer plus tard.",
+				);
+				break;
+		}
+
 		const error = await res.json().catch(() => ({ error: res.statusText }));
 		throw error;
 	}
@@ -78,10 +95,33 @@ async function handleResponse<T>(
 
 // Throws 204 if deletion is done
 async function handleDeleteResponse(res: Response): Promise<number> {
+	if (res.status === 401) {
+		toast.error("Votre session a expiré. Veuillez vous reconnecter.");
+		window.dispatchEvent(new Event("auth:unauthorized"));
+	}
+
 	if (!res.ok) {
-		const error = await res.json().catch(() => ({ error: res.statusText }));
+		switch (res.status) {
+			case 429:
+				toast.error(
+					"Vous avez effectué trop de requêtes. Réessayez dans quelques minutes.",
+				);
+				break;
+
+			case 500:
+				toast.error(
+					"Une erreur inattendue est survenue. Veuillez réessayer plus tard.",
+				);
+				break;
+		}
+
+		const error = await res.json().catch(() => ({
+			error: res.statusText,
+		}));
+
 		throw error;
 	}
+
 	if (res.status === 204) {
 		return res.status;
 	}

@@ -129,7 +129,7 @@ export function OperationDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+			<DialogContent className="max-h-[90vh] overflow-visible sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle>
 						{dialogMode === "edit"
@@ -204,7 +204,7 @@ export function OperationDialog({
 										{selectedCategory?.name ?? "Catégorie"}
 									</SelectValue>
 								</SelectTrigger>
-								<SelectContent className="z-60">
+								<SelectContent>
 									{categories.map((category) => (
 										<SelectItem key={category.id} value={String(category.id)}>
 											{category.name}

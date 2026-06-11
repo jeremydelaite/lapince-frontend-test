@@ -409,7 +409,7 @@ export function CrabRunner({ isDark }: { isDark: boolean }) {
 			ref={canvasRef}
 			role="img"
 			aria-label="Mini-jeu : La Pince saute par-dessus des marmites bouillonnantes"
-			className="mx-auto mt-8 w-full max-w-[600px] cursor-pointer touch-none select-none"
+			className="mx-auto my-16 w-full max-w-[600px] cursor-pointer touch-none select-none"
 			style={{ aspectRatio: `${WIDTH} / ${HEIGHT}` }}
 		/>
 	);

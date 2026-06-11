@@ -204,7 +204,7 @@ export function OperationDialog({
 										{selectedCategory?.name ?? "Catégorie"}
 									</SelectValue>
 								</SelectTrigger>
-								<SelectContent side="bottom">
+								<SelectContent className="z-60">
 									{categories.map((category) => (
 										<SelectItem key={category.id} value={String(category.id)}>
 											{category.name}

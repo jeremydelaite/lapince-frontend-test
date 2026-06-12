@@ -17,6 +17,8 @@ import { recalculateOperationState } from "@/utils/recalculateOperationState";
 type OperationTabProps = {
 	initialFilter: number | null;
 	onOperationMutated: () => void;
+	autoOpen?: boolean;
+	onAutoOpenHandled?: () => void;
 };
 
 export function buildDialogParticipants(
@@ -51,6 +53,8 @@ export function buildDialogParticipants(
 export function OperationTab({
 	initialFilter,
 	onOperationMutated,
+	autoOpen,
+	onAutoOpenHandled,
 }: OperationTabProps) {
 	const { project } = useProject();
 	const { categories } = useCategories();
@@ -88,13 +92,13 @@ export function OperationTab({
 
 	const loadOperations = useCallback(async () => {
 		if (!project?.id) return;
+
 		setIsLoading(true);
 		setError(null);
 		try {
 			const data = await apiGetOperations(project.id);
 			setOperations(data);
-		} catch (error) {
-			console.error("Erreur apiGetOperations:", error);
+		} catch {
 			setError("Impossible de charger les opérations");
 		} finally {
 			setIsLoading(false);
@@ -109,7 +113,7 @@ export function OperationTab({
 
 	useEffect(() => {
 		if (!selectedOperation || !project) return;
-
+		const participants = buildDialogParticipants(project, selectedOperation);
 		setOperationDialogState(
 			recalculateOperationState({
 				mode: "edit",
@@ -121,16 +125,16 @@ export function OperationTab({
 				categoryId: selectedOperation.categoryId,
 				date: selectedOperation.date.slice(0, 10),
 				isBalancedAmount: true,
-				hasNegativeDistribution: false,
+				hasSelectedParticipant: participants.some((p) => p.isSelected),
 				payerParticipantId: selectedOperation.payerParticipantId,
-				participants: buildDialogParticipants(project, selectedOperation),
+				participants: participants,
 			}),
 		);
 	}, [selectedOperation, project]);
 
 	// ── Ouverture création ────────────────────────────────────
 
-	function openCreateOperationDialog() {
+	const openCreateOperationDialog = useCallback(() => {
 		if (!project) return;
 
 		setSelectedOperation(null);
@@ -144,14 +148,21 @@ export function OperationTab({
 			isAmountCalculated: true,
 			categoryId: undefined,
 			isBalancedAmount: true,
-			hasNegativeDistribution: false,
+			hasSelectedParticipant: false,
 			date: new Date().toISOString().slice(0, 10),
 			payerParticipantId: undefined,
 			participants: buildDialogParticipants(project),
 		});
 
 		setIsOperationDialogOpen(true);
-	}
+	}, [project]);
+
+	useEffect(() => {
+		if (autoOpen) {
+			openCreateOperationDialog();
+			onAutoOpenHandled?.();
+		}
+	}, [autoOpen, onAutoOpenHandled, openCreateOperationDialog]);
 
 	// ── Filtre ───────────────────────────────────────────────
 

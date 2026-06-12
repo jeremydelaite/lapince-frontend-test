@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { OperationsRow } from "@/components/project/OperationsRow";
 import {
 	Table,
@@ -9,7 +10,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { IOperation } from "@/types/operations";
-import { Loader2 } from "lucide-react";
 
 type OperationsTableProps = {
 	operations: IOperation[];
@@ -43,11 +43,12 @@ export function OperationsTable({
 		{ className: "hidden md:table-row", colSpan: 4 },
 	];
 
-	if (isLoading) return (
-		<div className="flex justify-center py-8">
-			<Loader2 className="size-6 animate-spin text-muted-foreground" />
-		</div>
-	);
+	if (isLoading)
+		return (
+			<div className="flex justify-center py-8">
+				<Loader2 className="size-6 animate-spin text-muted-foreground" />
+			</div>
+		);
 
 	if (error) return <div>{error}</div>;
 	return (

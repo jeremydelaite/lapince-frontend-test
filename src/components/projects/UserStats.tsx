@@ -1,5 +1,6 @@
 import { ArrowDownLeft, ArrowUpRight, Folder, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { StatCard } from "@/components/projects/StatCard";
 import { useProjectsQuery } from "@/lib/useProjectsQuery";
 import { apiGetGlobalBalance, type GlobalBalance } from "@/services/api";
@@ -10,7 +11,9 @@ export function UserStats() {
 	const [balance, setBalance] = useState<GlobalBalance | null>(null);
 
 	useEffect(() => {
-		apiGetGlobalBalance().then(setBalance).catch(console.error);
+		apiGetGlobalBalance()
+			.then(setBalance)
+			.catch(() => toast.error("Impossible de charger le solde global"));
 	}, []);
 
 	const formatEuro = (amount: number) =>

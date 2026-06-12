@@ -34,7 +34,7 @@ export function ServerErrorPage() {
 						s'est invitée
 					</h2>
 					<img
-						src={isDark ? "/lapince404dark.png" : "/lapince500.png"}
+						src={isDark ? "/lapince500dark.png" : "/lapince500.png"}
 						alt="La Pince a fouillé partout, mais cette page est introuvable"
 						className="mx-auto mt-8 w-64 md:w-80 lg:w-96 h-auto"
 					/>

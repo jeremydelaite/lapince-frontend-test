@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { ProjectRow } from "@/components/projects/ProjectRow";
 import {
@@ -42,9 +43,9 @@ export function ProjectsTable() {
 	if (isLoading) {
 		return (
 			<section className="overflow-hidden rounded-lg border border-border">
-				<p className="px-6 py-8 text-center text-sm text-muted-foreground">
-					Chargement...
-				</p>
+				<div className="flex h-screen items-center justify-center">
+					<Loader2 className="size-8 animate-spin text-muted-foreground" />
+				</div>
 			</section>
 		);
 	}

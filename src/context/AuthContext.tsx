@@ -76,7 +76,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	// Calls POST /api/auth/register — no auto-login after register
 	async function register(payload: RegisterPayload) {
-		await apiRegister(payload);
+		const { user, token } = await apiRegister(payload);
+		localStorage.setItem("token", token);
+		setUser(user);
 	}
 
 	const value = {

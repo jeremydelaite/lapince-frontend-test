@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useState } from "react";
+import { toast } from "sonner";
 import {
 	apiGetBalance,
 	apiGetBudgets,
@@ -65,12 +66,16 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
 	// Re-fetche uniquement le résumé budget et les remboursements.
 	// Évite de recharger le projet entier quand seuls les montants ont changé.
 	const refreshBudget = useCallback(async (projectId: number) => {
-		const [budgetData, balanceData] = await Promise.all([
-			apiGetBudgets(projectId),
-			apiGetBalance(projectId),
-		]);
-		setBudgetSummary(budgetData);
-		setReimbursements(balanceData);
+		try {
+			const [budgetData, balanceData] = await Promise.all([
+				apiGetBudgets(projectId),
+				apiGetBalance(projectId),
+			]);
+			setBudgetSummary(budgetData);
+			setReimbursements(balanceData);
+		} catch {
+			toast.error("Impossible de charger le budget et la balance");
+		}
 	}, []);
 
 	const getProjectById = useCallback(async (projectId: number) => {
@@ -118,7 +123,6 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
 					budget: data.deleteBudget ? null : response.projectUpdate.budget,
 				}));
 			} catch (error) {
-				console.error(error);
 				throw error;
 			}
 		},

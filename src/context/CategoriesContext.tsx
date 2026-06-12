@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { apiGetCategories } from "@/services/api";
 import type { ICategories } from "@/types";
 
@@ -32,8 +33,8 @@ export default function CategoriesProvider({
 			try {
 				const data = await apiGetCategories();
 				setCategories(data);
-			} catch (error) {
-				console.error("Failed to load categories", error);
+			} catch {
+				toast.error("Impossible de charger les catégories");
 			} finally {
 				setIsLoading(false);
 			}

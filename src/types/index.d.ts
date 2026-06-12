@@ -16,6 +16,7 @@ export type LoginResponse = {
 // Response shape of POST /api/auth/register and GET /api/auth/me
 export type UserResponse = {
 	user: User;
+	token: string;
 };
 
 export type CategoriesResponse = {

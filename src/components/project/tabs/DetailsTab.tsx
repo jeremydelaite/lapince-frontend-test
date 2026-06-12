@@ -72,7 +72,7 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 		// This allows controlled inputs to display current values
 		setFormData({
 			name: project.name,
-			description: project.description,
+			description: project.description ?? undefined, // car lorsque lon creait un projet sans description s'il on modifiait dans detail sans ajouter de sdescription le patch ne passait pas
 			type: project.type,
 			budget: project.budget
 				? {
@@ -116,8 +116,14 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 			if (hadBudget && !nowHasBudget) {
 				payload.deleteBudget = true;
 			}
-			await updateProjectById(projectId, payload);
-			onBudgetUpdated();
+			try {
+				await updateProjectById(projectId, payload);
+				onBudgetUpdated();
+				toast.success("Modifications enregistrées");
+			} catch {
+				toast.error("Impossible de sauvegarder les modifications");
+				return;
+			}
 		}
 
 		// Toggle edit mode on/off
@@ -153,8 +159,8 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 					.filter((p): p is IParticipant => p !== undefined);
 
 				setParticipantsFormData(updated);
+				toast.success("Modifications enregistrées");
 			} catch (err) {
-				console.error("Error PATCH participants :", err);
 				// Handle backen error inline if project particpant add operations
 				setParticipantFormErrors({
 					global:
@@ -176,9 +182,8 @@ export function DetailsTab({ onBudgetUpdated }: DetailsTabProps) {
 				toast.success("Projet supprimé");
 				navigate("/projects");
 			}
-		} catch (err) {
+		} catch {
 			toast.error("Erreur : Impossible de supprimer le projet");
-			console.error("Error DELETE project :", err);
 			return;
 		}
 	}

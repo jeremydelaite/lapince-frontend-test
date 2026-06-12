@@ -14,6 +14,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemesContext";
 
@@ -22,7 +23,8 @@ export function ConnectedHeader() {
 	const navigate = useNavigate();
 	const { theme, setTheme } = useTheme();
 
-	const isDark = theme === "dark" ||
+	const isDark =
+		theme === "dark" ||
 		(theme === "system" &&
 			window.matchMedia("(prefers-color-scheme: dark)").matches);
 	function toggleDark() {
@@ -31,6 +33,7 @@ export function ConnectedHeader() {
 
 	async function handleLogout() {
 		await logout();
+		toast.success("Vous êtes déconnecté");
 		navigate("/login");
 	}
 	return (

@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -74,13 +75,17 @@ export function OperationDialog({
 		) {
 			return;
 		}
-		await apiDeleteOperation(
-			operationDialogState.operationId,
-			operationDialogState.projectId,
-		);
-		await onOperationChanged();
-		onOpenChange(false);
-		setOperationDialogState(null);
+		try {
+			await apiDeleteOperation(
+				operationDialogState.operationId,
+				operationDialogState.projectId,
+			);
+			await onOperationChanged();
+			onOpenChange(false);
+			setOperationDialogState(null);
+		} catch {
+			toast.error("Impossible de supprimer l'opération");
+		}
 	}
 
 	async function handleSubmit(event: React.SyntheticEvent) {
@@ -97,8 +102,8 @@ export function OperationDialog({
 			await onOperationChanged();
 			onOpenChange(false);
 			setOperationDialogState(null);
-		} catch (error) {
-			console.error("Failed to save operation:", error);
+		} catch {
+			toast.error("Impossible de sauvegarder l'opération");
 		}
 	}
 
@@ -150,7 +155,7 @@ export function OperationDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-h-[90vh] overflow-visible sm:max-w-lg">
+			<DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle>
 						{dialogMode === "edit"
@@ -212,8 +217,8 @@ export function OperationDialog({
 						</div>
 					</div>
 
-					<div className="grid grid-cols-10 gap-3">
-						<div className="col-span-7 space-y-2">
+					<div className="grid gap-3 min-[430px]:grid-cols-10">
+						<div className="min-[430px]:col-span-7 space-y-2">
 							<Label>Catégorie</Label>
 
 							<Select
@@ -240,7 +245,7 @@ export function OperationDialog({
 							</Select>
 						</div>
 
-						<div className="col-span-3 space-y-2">
+						<div className="min-[430px]:col-span-3 space-y-2">
 							<Label htmlFor="operation-date">Date</Label>
 							<Popover>
 								<PopoverTrigger
@@ -313,15 +318,21 @@ export function OperationDialog({
 								<input
 									type="checkbox"
 									className="size-4"
-									checked={operationDialogState?.participants.every((p) => p.isSelected) ?? false}
+									checked={
+										operationDialogState?.participants.every(
+											(p) => p.isSelected,
+										) ?? false
+									}
 									onChange={(event) =>
 										updateOperationDialogState({
-											participants: operationDialogState!.participants.map((p) => ({
-												...p,
-												isSelected: event.target.checked,
-												repartitionAmount: "",
-												isRepartitionAmountCalculated: true,
-											})),
+											participants: operationDialogState!.participants.map(
+												(p) => ({
+													...p,
+													isSelected: event.target.checked,
+													repartitionAmount: "",
+													isRepartitionAmountCalculated: true,
+												}),
+											),
 										})
 									}
 								/>

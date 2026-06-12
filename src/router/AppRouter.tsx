@@ -1,5 +1,4 @@
 import { Loader2 } from "lucide-react";
-import { StrictMode } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { useAuth } from "@/context/AuthContext";
 import { AuthPage } from "@/pages/AuthPage";
@@ -36,8 +35,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 export function AppRouter() {
 	return (
-		<StrictMode>
-			<BrowserRouter>
+		<BrowserRouter>
 				<Routes>
 					<Route
 						path="/"
@@ -85,7 +83,6 @@ export function AppRouter() {
 					<Route path="/server-error" element={<ServerErrorPage />} />
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
-			</BrowserRouter>
-		</StrictMode>
+		</BrowserRouter>
 	);
 }

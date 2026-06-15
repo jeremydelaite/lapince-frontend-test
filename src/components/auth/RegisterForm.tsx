@@ -76,11 +76,14 @@ export function RegisterForm({ onLoginClick }: RegisterFormProps) {
 
 			<div className="space-y-2">
 				<Label htmlFor="register-password">Mot de passe</Label>
+				<p className="mt-1 text-sm text-muted-foreground">
+					Au moins 8 caractères avec une majuscule, une minuscule et un chiffre.
+				</p>
 				<Input
 					id="register-password"
 					name="password"
 					type="password"
-					placeholder="Min. 8 caractères"
+					placeholder="Min. 8 caractères, 1 maj, 1 min, 1 chiffre"
 					required
 				/>
 			</div>

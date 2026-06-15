@@ -62,7 +62,7 @@ export function LoginForm({ onRegisterClick }: LoginFormProps) {
 					id="login-password"
 					name="password"
 					type="password"
-					placeholder="••••••••"
+					placeholder="Min. 8 caractères, 1 maj, 1 min, 1 chiffre"
 					required
 				/>
 			</div>
